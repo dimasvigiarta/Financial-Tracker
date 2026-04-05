@@ -1,113 +1,118 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Transaksi') }}
-        </h2>
+        <div class="flex items-center gap-3">
+            {{-- Tombol Kembali --}}
+            <a href="{{ route('transactions.index') }}" class="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-slate-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h2 class="font-extrabold text-xl text-slate-800 leading-tight tracking-tight">
+                {{ __('Edit Transaksi') }}
+            </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12" style="background-color: #f8fafc; min-height: 100vh;">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12 bg-slate-50/50 min-h-screen">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-gray-200">
+            <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200">
                 
-                <div class="px-8 py-6 border-b border-gray-100 bg-gray-50">
-                    <h3 class="text-xl font-bold text-gray-800">Form Edit Data</h3>
-                    <p class="text-sm text-gray-500 mt-1">Silakan perbarui data transaksi di bawah ini.</p>
+                {{-- Header Form --}}
+                <div class="px-6 py-6 sm:px-10 border-b border-slate-100 bg-slate-50/50">
+                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Perbarui Data</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Pastikan informasi transaksi sudah sesuai sebelum disimpan.</p>
                 </div>
 
-                <div class="p-8">
-
+                <div class="p-6 sm:p-10">
+                    {{-- Alert Error --}}
                     @if ($errors->any())
-                    <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-r-md">
-                        <div class="flex items-center">
-                            <svg class="h-5 w-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                            </svg>
-                            <div>
-                                <strong class="font-bold">Gagal Menyimpan:</strong>
-                                <span class="block">{{ $errors->first() }}</span>
-                            </div>
-                        </div>
+                    <div class="mb-8 bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 rounded-xl flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-sm font-bold">{{ $errors->first() }}</p>
                     </div>
                     @endif
 
-                    <form action="{{ route('transactions.update', $transaction) }}" method="POST">
+                    <form action="{{ route('transactions.update', $transaction) }}" method="POST" class="space-y-6">
                         @csrf
                         @method('PUT')
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {{-- Edit Tanggal --}}
                             <div>
-                                <label class="block font-bold text-sm text-gray-700 mb-2 ml-1">Tanggal</label>
+                                <label class="block font-black text-[11px] uppercase tracking-widest text-slate-400 mb-2 ml-1">Tanggal Transaksi</label>
                                 <input type="date" name="date" value="{{ $transaction->date }}"
-                                       class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pl-5 text-gray-800 font-medium"
-                                       required>
+                                       class="w-full rounded-2xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-4 text-slate-800 font-bold transition-all" required>
                             </div>
+
+                            {{-- Edit Jenis --}}
                             <div>
-                                <label class="block font-bold text-sm text-gray-700 mb-2 ml-1">Jenis</label>
-                                <select name="type" id="type_select" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pl-5 text-gray-800 font-medium">
-                                    <option value="expense" {{ $transaction->type == 'expense' ? 'selected' : '' }}>🔴 Pengeluaran</option>
-                                    <option value="income" {{ $transaction->type == 'income' ? 'selected' : '' }}>🟢 Pemasukan</option>
+                                <label class="block font-black text-[11px] uppercase tracking-widest text-slate-400 mb-2 ml-1">Jenis Laporan</label>
+                                <select name="type" id="type_select" 
+                                        class="w-full rounded-2xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-4 text-slate-800 font-bold transition-all">
+                                    <option value="expense" {{ $transaction->type == 'expense' ? 'selected' : '' }}>PENGELUARAN</option>
+                                    <option value="income" {{ $transaction->type == 'income' ? 'selected' : '' }}>PEMASUKAN</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="mb-6">
-                            <label class="block font-bold text-sm text-gray-700 mb-2 ml-1">Kategori</label>
-                            <select name="category_id" id="category_select" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pl-5 text-gray-800 font-medium">
+                        {{-- Edit Kategori --}}
+                        <div>
+                            <label class="block font-black text-[11px] uppercase tracking-widest text-slate-400 mb-2 ml-1">Kategori Keuangan</label>
+                            <select name="category_id" id="category_select" 
+                                    class="w-full rounded-2xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-4 text-slate-800 font-bold transition-all">
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" 
                                             data-type="{{ $category->type }}"
                                             {{ $transaction->category_id == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                        {{ strtoupper($category->name) }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="block font-bold text-sm text-gray-700 mb-2 ml-1">Nominal Uang</label>
-                            <div class="flex rounded-lg shadow-sm">
-                                <span class="inline-flex items-center px-5 py-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-600 font-bold text-lg">
-                                    Rp
-                                </span>
+                        {{-- Edit Nominal --}}
+                        <div>
+                            <label class="block font-black text-[11px] uppercase tracking-widest text-slate-400 mb-2 ml-1">Nominal Transaksi (IDR)</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-5 text-slate-400 font-black text-lg">Rp</span>
                                 <input type="number" name="amount" value="{{ $transaction->amount }}"
-                                       class="flex-1 block w-full rounded-none rounded-r-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 p-3 pl-5 text-lg font-bold text-gray-800"
-                                       placeholder="0" required>
+                                       class="w-full rounded-2xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-5 pl-14 pr-5 text-2xl font-black text-slate-800 transition-all" 
+                                       placeholder="0" required min="500">
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 italic mb-6 ml-1">*Minimal Rp 500</p>
 
-                        <div class="mb-8">
-                            <label class="block font-bold text-sm text-gray-700 mb-2 ml-1">Keterangan</label>
-                            <textarea name="description" rows="3"
-                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 pl-5 text-gray-800 font-medium"
+                        {{-- Edit Keterangan --}}
+                        <div>
+                            <label class="block font-black text-[11px] uppercase tracking-widest text-slate-400 mb-2 ml-1">Keterangan Tambahan</label>
+                            <textarea name="description" rows="3" 
+                                      class="w-full rounded-2xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-4 text-slate-800 font-bold transition-all" 
                                       required>{{ $transaction->description }}</textarea>
                         </div>
 
-                        <div class="mb-8 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-4 rounded-r-md">
-                            <div class="flex items-start">
-                                <svg class="h-5 w-5 text-yellow-400 mr-2 mt-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-medium">
-                                        <strong>Perhatian:</strong> Mohon cek kembali nominal dan tanggal sebelum menyimpan.
-                                    </p>
-                                </div>
-                            </div>
+                        {{-- Info Box (Pengganti Yellow Alert) --}}
+                        <div class="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex items-start gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-xs font-bold text-amber-700 leading-relaxed uppercase tracking-tight">
+                                Perhatian: Mengubah data ini akan langsung mempengaruhi laporan saldo dan riwayat transaksi Anda.
+                            </p>
                         </div>
 
-                        <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                        {{-- Tombol Aksi --}}
+                        <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-8 border-t border-slate-100">
                             <a href="{{ route('transactions.index') }}" 
-                               class="text-sm font-bold text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100 transition duration-200">
+                               class="w-full sm:w-auto text-center text-xs font-black text-slate-400 hover:text-slate-600 px-6 py-4 transition-colors uppercase tracking-widest">
                                 Batal
                             </a>
                             <button type="submit" 
-                                    style="background-color: #2563eb; color: white; padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                    class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-indigo-100 active:scale-95">
                                 Simpan Perubahan
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -120,38 +125,24 @@
             const categorySelect = document.getElementById('category_select');
             const allOptions = Array.from(categorySelect.querySelectorAll('option'));
 
-            function filterCategories() {
-                const selectedType = typeSelect.value; // 'income' atau 'expense'
-
+            function filterCategories(isInitialLoad = false) {
+                const selectedType = typeSelect.value;
+                
                 allOptions.forEach(option => {
-                    // Ambil tipe dari kategori tersebut
                     const categoryType = option.getAttribute('data-type');
-
-                    // Tampilkan jika tipenya cocok, ATAU jika kategori itu tidak punya tipe (biar aman)
-                    if (categoryType === selectedType) {
-                        option.style.display = 'block';
-                    } else {
-                        option.style.display = 'none';
-                    }
+                    option.style.display = (categoryType === selectedType) ? 'block' : 'none';
                 });
 
-                // Pastikan nilai yang terpilih valid (kalau hidden, reset)
-                const currentSelected = categorySelect.options[categorySelect.selectedIndex];
-                if (currentSelected && currentSelected.style.display === 'none') {
-                    categorySelect.value = ""; // Reset jika pilihan saat ini jadi tersembunyi
+                // Jika bukan load awal (user mengganti tipe secara manual), reset kategori
+                if (!isInitialLoad) {
+                    categorySelect.value = "";
                 }
             }
 
-            // Jalankan saat user mengubah Pemasukan/Pengeluaran
-            typeSelect.addEventListener('change', function() {
-                filterCategories();
-                categorySelect.value = ""; // Reset pilihan kategori saat ganti jenis
-            });
-
-            // JALANKAN LANGSUNG SAAT HALAMAN DIBUKA
-            // Ini penting biar pas edit, kategori yang salah langsung hilang
-            filterCategories();
+            typeSelect.addEventListener('change', () => filterCategories(false));
+            
+            // Jalankan pertama kali tanpa mereset nilai kategori yang sudah terpilih saat edit
+            filterCategories(true);
         });
     </script>
-
 </x-app-layout>
