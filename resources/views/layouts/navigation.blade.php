@@ -3,39 +3,48 @@
         <div class="flex justify-between h-16">
             <div class="flex items-center">
                 
+                {{-- LOGO --}}
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group transition-all">
-                        {{-- Icon Dompet Premium --}}
+                    <a href="{{ auth()->user()->is_admin ? route('admin.users.index') : route('dashboard') }}" class="flex items-center gap-3 group transition-all">
                         <div class="bg-gradient-to-br from-slate-900 to-slate-700 p-2 rounded-xl shadow-lg shadow-slate-200 group-hover:scale-105 transition-transform">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-5z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 12h.01M15 12h.01" />
                             </svg>
                         </div>
-                        {{-- Teks Brand --}}
                         <span class="text-xl font-black tracking-tighter text-slate-800 uppercase">
                             UANG<span class="text-indigo-600">KU</span>
                         </span>
                     </a>
                 </div>
 
+                {{-- MENU DESKTOP --}}
                 <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-sm font-bold tracking-wide">
-                        {{ __('Ringkasan') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')" class="text-sm font-bold tracking-wide">
-                        {{ __('Transaksi') }}
-                    </x-nav-link>
+                    @if(auth()->user()->is_admin)
+                        {{-- Menu khusus Admin --}}
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')" class="text-sm font-bold tracking-wide">
+                            {{ __('Kelola Pengguna') }}
+                        </x-nav-link>
+                    @else
+                        {{-- Menu khusus User Biasa --}}
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-sm font-bold tracking-wide">
+                            {{ __('Ringkasan') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')" class="text-sm font-bold tracking-wide">
+                            {{ __('Transaksi') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
+            {{-- DROPDOWN PROFIL (DESKTOP) --}}
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-4 py-2 border border-slate-100 text-sm leading-4 font-bold rounded-xl text-slate-600 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 focus:outline-none transition ease-in-out duration-150">
                             <div class="flex items-center gap-2">
-                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                {{ Auth::user()->name }}
+                                <div class="w-2 h-2 rounded-full {{ auth()->user()->is_admin ? 'bg-indigo-500' : 'bg-emerald-500' }}"></div>
+                                {{ Auth::user()->name }} {{ auth()->user()->is_admin ? '(Admin)' : '' }}
                             </div>
                             <div class="ms-2">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -62,6 +71,7 @@
                 </x-dropdown>
             </div>
 
+            {{-- HAMBURGER BUTTON (MOBILE) --}}
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100 focus:outline-none transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -73,19 +83,34 @@
         </div>
     </div>
 
+    {{-- MENU RESPONSIVE (MOBILE) --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white border-t border-slate-50 shadow-inner">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-bold">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')" class="font-bold">
-                {{ __('Riwayat Transaksi') }}
-            </x-responsive-nav-link>
+            @if(auth()->user()->is_admin)
+                {{-- Menu Mobile khusus Admin --}}
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')" class="font-black text-indigo-600">
+                    {{ __('KELOLA PENGGUNA') }}
+                </x-responsive-nav-link>
+            @else
+                {{-- Menu Mobile khusus User Biasa --}}
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-bold">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')" class="font-bold">
+                    {{ __('Riwayat Transaksi') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
+        {{-- USER INFO & LOGOUT (MOBILE) --}}
         <div class="pt-4 pb-1 border-t border-slate-100 bg-slate-50">
             <div class="px-4 mb-3">
-                <div class="font-black text-slate-800 text-base">{{ Auth::user()->name }}</div>
+                <div class="font-black text-slate-800 text-base flex items-center gap-2">
+                    {{ Auth::user()->name }}
+                    @if(auth()->user()->is_admin)
+                        <span class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-md">ADMIN</span>
+                    @endif
+                </div>
                 <div class="font-medium text-xs text-slate-500">{{ Auth::user()->email }}</div>
             </div>
             <div class="space-y-1">

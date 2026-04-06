@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TransactionController;
-use App\Models\Transaction; // <--- PENTING: Biar kenal Database Transaksi
+use App\Models\Transaction; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -12,8 +12,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// === BAGIAN INI YANG TADINYA KOSONG ===
-// Sekarang kita isi dengan logika hitung saldo
+// === BAGIAN INI UNTUK DASHBOARD USER ===
 Route::get('/dashboard', function () {
     $userId = Auth::id();
     
@@ -32,6 +31,8 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 // ======================================
 
+
+// RUTE KHUSUS USER YANG SUDAH LOGIN
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -41,5 +42,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('transactions', TransactionController::class);
 });
+
+
+// === RUTE KHUSUS SUPER ADMIN ===
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+});
+// ===============================
+
 
 require __DIR__.'/auth.php';
