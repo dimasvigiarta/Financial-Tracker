@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -46,7 +46,7 @@ class User extends Authenticatable
         ];
     }
 
-    // Tambahkan ini di bagian bawah (sebelum kurung kurawal tutup terakhir class)
+    // Tambahkan ini di bagian bawah
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
